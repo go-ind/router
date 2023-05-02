@@ -3,13 +3,12 @@ package example
 import (
 	"fmt"
 	"net/http"
+
+	goind "github.com/go-ind/go-ind-router"
 )
 
 func main() {
-	r := &router{
-		routes:      make(map[string]map[string]func(http.ResponseWriter, *http.Request)),
-		SettingLogs: "FULLY_LOGING",
-	}
+	r := goind.SetupDefaultRouter()
 
 	r.Get("/", func(w http.ResponseWriter, req *http.Request) {
 		id := req.URL.Query().Get("id")
@@ -30,7 +29,7 @@ func main() {
 		id := req.URL.Query().Get("id")
 		fmt.Println("id =>", id)
 		fmt.Fprint(w, "Hello, worldssss!")
-		ResponseJSON(w, ctx, 200, true, "Succes", nil, nil)
+		goind.ResponseJSON(w, ctx, 200, true, "Succes", nil, nil)
 	})
 
 	r.Post("/", func(w http.ResponseWriter, req *http.Request) {
@@ -38,7 +37,7 @@ func main() {
 		// id := req.URL.Query().Get("id")
 		// fmt.Println("id =>", id)
 		// fmt.Fprint(w, "POST succes cok")
-		ResponseJSON(w, ctx, 200, true, "Succes", nil, nil)
+		goind.ResponseJSON(w, ctx, 200, true, "Succes", nil, nil)
 	})
 
 	r.Put("/", func(w http.ResponseWriter, req *http.Request) {

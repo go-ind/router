@@ -25,13 +25,13 @@ const (
 
 type (
 	group struct {
-		router
+		Router
 		prefix string
 		RoutesInterface
 		// handlers []func(http.HandlerFunc) http.HandlerFunc
 	}
-	router struct {
-		routes      map[string]map[string]func(http.ResponseWriter, *http.Request)
+	Router struct {
+		Routes      map[string]map[string]func(http.ResponseWriter, *http.Request)
 		SettingLogs string
 		middlewares []func(http.Handler) http.Handler
 		patern      string
@@ -41,10 +41,18 @@ type (
 	}
 )
 
-func SetupDefaultRouter() *router {
-	r := &router{
-		routes:      make(map[string]map[string]func(http.ResponseWriter, *http.Request)),
+func SetupDefaultRouter() *Router {
+	r := &Router{
+		Routes:      make(map[string]map[string]func(http.ResponseWriter, *http.Request)),
 		SettingLogs: "FULLY_LOGING",
+	}
+	return r
+}
+
+func SetupWithNoLogging() *Router {
+	r := &Router{
+		Routes:      make(map[string]map[string]func(http.ResponseWriter, *http.Request)),
+		SettingLogs: "NON_LOGING",
 	}
 	return r
 }
@@ -64,36 +72,36 @@ func init() {
 	fmt.Println("Minimalist Framework Faster with ")
 	fmt.Println(logoGoind)
 }
-func (r *router) addRoute(method, path string, handler func(http.ResponseWriter, *http.Request)) {
+func (r *Router) addRoute(method, path string, handler func(http.ResponseWriter, *http.Request)) {
 	if _, ok := r.routes[path]; !ok {
 		r.routes[path] = make(map[string]func(http.ResponseWriter, *http.Request))
 	}
 	r.routes[path][method] = handler
 }
-func (r *router) Get(path string, handler func(http.ResponseWriter, *http.Request)) {
+func (r *Router) Get(path string, handler func(http.ResponseWriter, *http.Request)) {
 	pathFinal := r.patern + path
 	r.addRoute(HttpMethodGet, pathFinal, handler)
 }
-func (r *router) Post(path string, handler func(http.ResponseWriter, *http.Request)) {
+func (r *Router) Post(path string, handler func(http.ResponseWriter, *http.Request)) {
 	r.addRoute(HttpMethodPost, path, handler)
 }
 
-func (r *router) Put(path string, handler func(http.ResponseWriter, *http.Request)) {
+func (r *Router) Put(path string, handler func(http.ResponseWriter, *http.Request)) {
 	r.addRoute(HttpMethodPut, path, handler)
 }
 
-func (r *router) Patch(path string, handler func(http.ResponseWriter, *http.Request)) {
+func (r *Router) Patch(path string, handler func(http.ResponseWriter, *http.Request)) {
 	r.addRoute(HttpMethodPatch, path, handler)
 }
 
-func (r *router) Delete(path string, handler func(http.ResponseWriter, *http.Request)) {
+func (r *Router) Delete(path string, handler func(http.ResponseWriter, *http.Request)) {
 	r.addRoute(HttpMethodDelete, path, handler)
 }
 
 // ////////////////////
 func (r *group) Get(path string, handler func(http.ResponseWriter, *http.Request)) {
 	pathFinal := r.prefix + path
-	r.router.addRoute(HttpMethodGet, pathFinal, handler)
+	r.Router.addRoute(HttpMethodGet, pathFinal, handler)
 	// r.addRoute(HttpMethodGet, pathFinal, handler)
 }
 func (r *group) Post(path string, handler func(http.ResponseWriter, *http.Request)) {
@@ -112,7 +120,7 @@ func (r *group) Delete(path string, handler func(http.ResponseWriter, *http.Requ
 	r.addRoute(HttpMethodDelete, path, handler)
 }
 
-func (r *router) Use(midleware ...func(http.Handler) http.Handler) {
+func (r *Router) Use(midleware ...func(http.Handler) http.Handler) {
 	// r.addRoute(HttpMethodDelete, path, handler)
 	// if mx.handler != nil {
 	// 	panic("chi: all middlewares must be defined before routes on a mux")
@@ -120,7 +128,7 @@ func (r *router) Use(midleware ...func(http.Handler) http.Handler) {
 	r.middlewares = append(r.middlewares, midleware...)
 }
 
-func (r *router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	loc, _ := time.LoadLocation("Asia/Jakarta")
 	start := time.Now().In(loc)
 	req = StartRecord(req, start)
@@ -210,9 +218,9 @@ type UTCFormatter struct {
 	logrus.Formatter
 }
 
-func (r *router) Group(prefix string, middleware ...http.HandlerFunc) *group {
+func (r *Router) Group(prefix string, middleware ...http.HandlerFunc) *group {
 	return &group{
-		router: *r,
+		Router: *r,
 		prefix: prefix,
 		// handlers: middleware,
 	}
@@ -237,7 +245,7 @@ func (r *router) Group(prefix string, middleware ...http.HandlerFunc) *group {
 //		return wrapped
 //	}
 func main() {
-	r := &router{
+	r := &Router{
 		routes:      make(map[string]map[string]func(http.ResponseWriter, *http.Request)),
 		SettingLogs: "FULLY_LOGING",
 	}
