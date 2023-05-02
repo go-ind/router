@@ -73,10 +73,10 @@ func init() {
 	fmt.Println(logoGoind)
 }
 func (r *Router) addRoute(method, path string, handler func(http.ResponseWriter, *http.Request)) {
-	if _, ok := r.routes[path]; !ok {
-		r.routes[path] = make(map[string]func(http.ResponseWriter, *http.Request))
+	if _, ok := r.Routes[path]; !ok {
+		r.Routes[path] = make(map[string]func(http.ResponseWriter, *http.Request))
 	}
-	r.routes[path][method] = handler
+	r.Routes[path][method] = handler
 }
 func (r *Router) Get(path string, handler func(http.ResponseWriter, *http.Request)) {
 	pathFinal := r.patern + path
@@ -133,7 +133,7 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	start := time.Now().In(loc)
 	req = StartRecord(req, start)
 
-	if handlers, ok := r.routes[req.URL.Path]; ok {
+	if handlers, ok := r.Routes[req.URL.Path]; ok {
 		if handler, ok := handlers[req.Method]; ok {
 
 			for _, v := range r.middlewares {
@@ -246,7 +246,7 @@ func (r *Router) Group(prefix string, middleware ...http.HandlerFunc) *group {
 //	}
 func main() {
 	r := &Router{
-		routes:      make(map[string]map[string]func(http.ResponseWriter, *http.Request)),
+		Routes:      make(map[string]map[string]func(http.ResponseWriter, *http.Request)),
 		SettingLogs: "FULLY_LOGING",
 	}
 
