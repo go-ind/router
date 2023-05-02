@@ -1,4 +1,4 @@
-module go-ind
+module github.com/go-ind/goindrouter
 
 go 1.19
 

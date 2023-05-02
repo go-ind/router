@@ -1,4 +1,4 @@
-package main
+package goindrouter
 
 import "time"
 
@@ -17,6 +17,10 @@ const (
 	services = "Internal Service"
 
 	LogKey = Key(48)
+
+	COMPLETE_LOGING   = "FULLY_LOGGING"
+	INCOMPLETE_LOGING = "INCOMPLETE_LOGING"
+	NON_LOGING        = "NON_LOGING"
 )
 
 // Data is data standard output
