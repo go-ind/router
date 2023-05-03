@@ -1,4 +1,4 @@
-module github.com/go-ind/goindrouter
+module github.com/go-ind/router
 
 go 1.19
 
