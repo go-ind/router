@@ -1,4 +1,4 @@
-package goindrouter
+package router
 
 import "time"
 
