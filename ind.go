@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httputil"
 	"time"
@@ -166,7 +167,6 @@ func JSONMarshal(t interface{}) ([]byte, error) {
 	encoder := json.NewEncoder(buffer)
 	encoder.SetEscapeHTML(false)
 	err := encoder.Encode(t)
-	fmt.Println("Err", err)
 	return buffer.Bytes(), err
 }
 
@@ -202,7 +202,8 @@ func Output(out *Data, level string) {
 	if err != nil {
 		fmt.Println("error")
 	}
-	fmt.Printf("%+v\n", string(result))
+	// fmt.Printf("%+v\n", string(result))
+	log.Printf("%+v\n", string(result))
 	// logrus.SetFormatter(UTCFormatter{&logrus.JSONFormatter{}})
 	// if level == "ERROR" {
 	// 	logrus.WithField("data", out).Error("apps")
