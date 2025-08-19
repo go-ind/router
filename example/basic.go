@@ -1,10 +1,10 @@
-package example
+package main
 
 import (
 	"fmt"
 	"net/http"
 
-	goind "github.com/go-ind/go-ind-router"
+	goind "github.com/go-ind/router"
 )
 
 func main() {
