@@ -1,19 +1,46 @@
 # router
-Go ind router
 
+A tiny HTTP router with grouping and middleware support.
 
-# Example
+## Installation
+
+```
+go get github.com/go-ind/router
+```
+
+## Usage
+
+```go
+package main
+
+import (
+    "fmt"
+    "net/http"
+
+    "github.com/go-ind/router"
+)
 
 func main() {
-	r := goind.SetupDefaultRouter()
+    r := router.SetupDefaultRouter()
 
-	r.Post("/", func(w http.ResponseWriter, req *http.Request) {
-        goind.ResponseJSON(w, ctx, 200, true, "Succes", nil, nil)
-	})
+    r.Get("/", func(w http.ResponseWriter, req *http.Request) {
+        fmt.Fprint(w, "hello")
+    })
 
-	v1 := r.Group("/parent")
-	v1.Get("/child", func(w http.ResponseWriter, req *http.Request) {
-        goind.ResponseJSON(w, ctx, 200, true, "Succes", nil, nil)
-	})
+    api := r.Group("/api")
+    api.Get("/ping", func(w http.ResponseWriter, req *http.Request) {
+        fmt.Fprint(w, "pong")
+    })
 
-	http.ListenAndServe(":8080", r)
+    // simple middleware example
+    r.Use(func(next http.Handler) http.Handler {
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+            w.Header().Set("X-Demo", "middleware")
+            next.ServeHTTP(w, r)
+        })
+    })
+
+    http.ListenAndServe(":8080", r)
+}
+```
+
